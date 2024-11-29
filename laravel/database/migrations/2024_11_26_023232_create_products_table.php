@@ -15,6 +15,7 @@ class CreateProductsTable extends Migration
             $table->decimal('price', 10, 2);
             $table->integer('stock');
             $table->text('description')->nullable();
+            $table->string('image')->nullable(); // Add image path column
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->timestamps();
         });

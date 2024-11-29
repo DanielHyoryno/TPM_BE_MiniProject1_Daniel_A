@@ -1,92 +1,74 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1 class="text-center mb-4">Daftar Produk Toko Bangunan</h1>
+    <h1 class="text-center mb-4">Edit Produk</h1>
 
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
+    <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT') 
+
+        <div class="form-group">
+            <label for="name">Nama Produk</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $product->name) }}" required>
+            @error('name')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
         </div>
-    @endif
 
-    <a href="{{ route('products.create') }}" class="btn btn-success mb-3">
-        <i class="bi bi-plus-circle"></i> Tambah Produk
-    </a>
+        <div class="form-group">
+            <label for="description">Deskripsi</label>
+            <textarea class="form-control" id="description" name="description" required>{{ old('description', $product->description) }}</textarea>
+            @error('description')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
+        </div>
 
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>
-                    <a href="{{ route('products.index', ['sortBy' => 'name', 'sortOrder' => $sortOrder === 'asc' ? 'desc' : 'asc']) }}">
-                        #
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ route('products.index', ['sortBy' => 'name', 'sortOrder' => $sortOrder === 'asc' ? 'desc' : 'asc']) }}">
-                        Nama Produk
-                        @if ($sortBy == 'name')
-                            <span class="text-muted">({{ $sortOrder === 'asc' ? '↑' : '↓' }})</span>
-                        @endif
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ route('products.index', ['sortBy' => 'description', 'sortOrder' => $sortOrder === 'asc' ? 'desc' : 'asc']) }}">
-                        Deskripsi
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ route('products.index', ['sortBy' => 'price', 'sortOrder' => $sortOrder === 'asc' ? 'desc' : 'asc']) }}">
-                        Harga
-                        @if ($sortBy == 'price')
-                            <span class="text-muted">({{ $sortOrder === 'asc' ? '↑' : '↓' }})</span>
-                        @endif
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ route('products.index', ['sortBy' => 'stock', 'sortOrder' => $sortOrder === 'asc' ? 'desc' : 'asc']) }}">
-                        Stok
-                        @if ($sortBy == 'stock')
-                            <span class="text-muted">({{ $sortOrder === 'asc' ? '↑' : '↓' }})</span>
-                        @endif
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ route('products.index', ['sortBy' => 'category_id', 'sortOrder' => $sortOrder === 'asc' ? 'desc' : 'asc']) }}">
-                        Kategori
-                        @if ($sortBy == 'category_id')
-                            <span class="text-muted">({{ $sortOrder === 'asc' ? '↑' : '↓' }})</span>
-                        @endif
-                    </a>
-                </th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($products as $product)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $product->name }}</td>
-                    <td>{{ Str::limit($product->description, 100) }}</td>
-                    <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
-                    <td>{{ $product->stock }}</td>
-                    <td>{{ $product->category->name }}</td>
-                    <td class="d-flex justify-content-around">
-                        <!-- Edit and Delete buttons -->
-                        <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning btn-sm">
-                            <i class="bi bi-pencil-square"></i> Edit
-                        </a>
+        <div class="form-group">
+            <label for="price">Harga</label>
+            <input type="number" class="form-control" id="price" name="price" value="{{ old('price', $product->price) }}" required>
+            @error('price')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
+        </div>
 
-                        <form action="{{ route('products.destroy', $product->id) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                <i class="bi bi-trash"></i> Hapus
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+        <div class="form-group">
+            <label for="stock">Stok</label>
+            <input type="number" class="form-control" id="stock" name="stock" value="{{ old('stock', $product->stock) }}" required>
+            @error('stock')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
+        </div>
 
+        <div class="form-group">
+            <label for="category_id">Kategori</label>
+            <select class="form-control" id="category_id" name="category_id" required>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
+            @error('category_id')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="image">Gambar Produk</label>
+            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+            @error('image')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
+        </div>
+
+        @if ($product->image)
+            <div class="form-group">
+                <label>Gambar Produk Saat Ini</label><br>
+                <img src="{{ asset('storage/' . $product->image) }}" alt="Current Product Image" style="width: 100px; height: auto;">
+            </div>
+        @endif
+
+        <br>
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
 @endsection

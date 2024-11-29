@@ -1,20 +1,26 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Models\Product;
-use App\Http\Controllers\ProductController; // Import the ProductController
-use App\Http\Controllers\HomeController; // Import the ProductController
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AuthenticationController;
 
+Route::get('/', [HomeController::class, 'home'])->name('home');
 
-// Home route to display products
-// In web.php, you define your routes
-// In web.php
-// In web.php
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::controller(ProductController::class)->group(function() {
+    Route::prefix('products')->name('products.')->group(function () {
+        Route::get('index', 'index')->name('index'); 
+        Route::get('create', 'create')->name('create'); 
+        Route::post('store', 'store')->name('store');
+        Route::get('{id}/edit', 'edit')->name('edit'); 
+        Route::put('{id}', 'update')->name('update');
+        Route::delete('{id}', 'destroy')->name('destroy');
+    });
+});
 
-
-Route::get('products/create', [ProductController::class, 'create'])->name('products.create');
-Route::get('products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
-
-Route::resource('products', ProductController::class);
-// Route::get('/', [ProductController::class,'showSort']);
+Route::controller(AuthenticationController::class)->group(function() {
+    Route::get('/register', 'getRegister')->name('getRegister');
+    Route::post('/register', 'register')->name('register');
+    Route::get('/login', 'getLogin')->name('getLogin');
+    Route::post('/login', 'login')->name('login');
+});
