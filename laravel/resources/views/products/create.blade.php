@@ -3,7 +3,7 @@
 @section('content')
     <h1 class="text-center mb-4">Tambah Produk</h1>
 
-    <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data"> <!-- Added enctype for file upload -->
+    <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="form-group">
@@ -55,7 +55,7 @@
         <!-- Image Upload Field -->
         <div class="form-group">
             <label for="image">Gambar Produk</label>
-            <input type="file" class="form-control" id="image" name="image" accept="image/*"> <!-- Image file input -->
+            <input type="file" class="form-control" id="image" name="image" accept="image/*"> 
             @error('image')
                 <small class="text-danger">{{ $message }}</small>
             @enderror
